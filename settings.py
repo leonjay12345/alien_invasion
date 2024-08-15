@@ -20,8 +20,8 @@ class Settings:
         self.bullet_height = 15
         self.bullet_color = (0,0,0) 
         #alien settings
-        self.alien_speed = 10
+        self.alien_speed = 5
         self.fleet_direction = 1
-        self.fleet_drop_speed = 5
+        self.fleet_drop_speed = 3
         #1代表向右，-1代表向左
 

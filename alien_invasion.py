@@ -14,13 +14,20 @@ from alien import Alien
 
 from game_stats import GameStats
 
+from button import Button
+
 class AlienInvasion:
     def __init__(self):
         pygame.init()
         self.clock = pygame.time.Clock()
         self.settings = Settings()
+
         #游戏启动后处于活动状态
-        self.active = True
+        self.active = False
+        #创建按钮
+        #self.play_button = Button(self,"Play")
+
+
 
         self.screen = pygame.display.set_mode((self.settings.screen_width,self.settings.screen_height))
         pygame.display.set_caption("Alien Invasion")
@@ -37,6 +44,8 @@ class AlienInvasion:
 
         self.aliens = pygame.sprite.Group()
         self._create_fleet()
+        #创建按钮
+        self.play_button = Button(self,"Play")
 
 
     def _create_alien(self,x_position,y_position):
@@ -120,7 +129,21 @@ class AlienInvasion:
                 #if event.key == pygame.K_UP:
                     #self.ship.moving_up = False
                 #if event.key ==pygame.K_DOWN:
-                    #self.ship.moving_down = False        
+                    #self.ship.moving_down = False
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                 mouse_pos = pygame.mouse.get_pos()
+                 self._check_play_button(mouse_pos)               
+    def _check_play_button(self,mouse_pos):
+         button_clicked = self.play_button.rect.collidepoint(mouse_pos)
+         if button_clicked and not self.active:
+              self.stats.reset_stats()
+
+              self.active  = True
+              #清空列表
+              self.bullets.empty()
+              self.aliens.empty()
+              #将创建的新的飞船放置在屏幕底部中央
+              self.ship.center_ship()
 
 
 
@@ -133,6 +156,8 @@ class AlienInvasion:
        
         self.ship.blitme()
         self.aliens.draw(self.screen)
+        if  not self.active:
+             self.play_button.draw_button()
 
                 
     
@@ -150,7 +175,7 @@ class AlienInvasion:
         self.bullets.add(new_bullet)
     def _check_bullet_alien_collision(self):
          #检查是否有子弹击中外星人
-        collisions = pygame.sprite.groupcollide(self.bullets,self.aliens,True,True)
+        collisions = pygame.sprite.groupcollide(self.bullets,self.aliens,False,True)
         if not self.aliens:
              self.bullets.empty()
              self._create_fleet()
