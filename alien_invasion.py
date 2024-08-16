@@ -16,6 +16,10 @@ from game_stats import GameStats
 
 from button import Button
 
+from score_board import ScoreBoard
+
+
+
 class AlienInvasion:
     def __init__(self):
         pygame.init()
@@ -31,8 +35,10 @@ class AlienInvasion:
 
         self.screen = pygame.display.set_mode((self.settings.screen_width,self.settings.screen_height))
         pygame.display.set_caption("Alien Invasion")
-        #创建一个用于存储游戏统计信息的实例
+        #创建一个用于存储游戏统计信息的实例,并创建积分拍
+
         self.stats = GameStats(self)
+        self.score_board = ScoreBoard(self)
         
 
 
@@ -95,7 +101,7 @@ class AlienInvasion:
         elif event.key == pygame.K_SPACE:
                     #self._fire_bullet()
              self._fire_bullet()
-             file = r"menwai_02.mp3"
+             file = r"alien_invasion/menwai_02.mp3"
              pygame.mixer.init()
              track = pygame.mixer.music.load(file)
              pygame.mixer.music.play()
@@ -137,14 +143,20 @@ class AlienInvasion:
          button_clicked = self.play_button.rect.collidepoint(mouse_pos)
          if button_clicked and not self.active:
               self.stats.reset_stats()
+              self.score_board.prep_score()
 
               self.active  = True
               #清空列表
               self.bullets.empty()
               self.aliens.empty()
+
               #将创建的新的飞船放置在屏幕底部中央
               self.ship.center_ship()
-
+             #还原游戏的开始设置
+              self.settings.initialize_dynamic_settings()
+              
+              
+                        
 
 
     def _update_screen(self):
@@ -158,6 +170,9 @@ class AlienInvasion:
         self.aliens.draw(self.screen)
         if  not self.active:
              self.play_button.draw_button()
+
+        #显示得分
+        self.score_board.show_score()
 
                 
     
@@ -176,9 +191,18 @@ class AlienInvasion:
     def _check_bullet_alien_collision(self):
          #检查是否有子弹击中外星人
         collisions = pygame.sprite.groupcollide(self.bullets,self.aliens,False,True)
+        if collisions:
+             self.stats.score+= self.settings.alien_score
+             
+             self.score_board.prep_score()
+             self.score_board.check_high_score()
+     
+             
         if not self.aliens:
              self.bullets.empty()
              self._create_fleet()
+             self.settings.increase_speed()
+
          
     
     

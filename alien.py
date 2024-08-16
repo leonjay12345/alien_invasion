@@ -10,7 +10,7 @@ class Alien(Sprite):
 
 
         #load pictures,set info
-        self.image = pygame.image.load("images/laoda.png")
+        self.image = pygame.image.load("alien_invasion/images/laoda.png")
         self.rect = self.image.get_rect()
        
        #set the begining position for aliens

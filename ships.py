@@ -7,7 +7,7 @@ class Ship:
 
         #加载飞船的图像
 
-        self.image = pygame.image.load("images/meme.png")
+        self.image = pygame.image.load("alien_invasion/images/meme.png")
         self.rect = self.image.get_rect()
 
         #设置位置
